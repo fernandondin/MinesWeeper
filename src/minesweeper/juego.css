@@ -1,0 +1,22 @@
+/*
+ * Empty Stylesheet file.
+ */
+
+.mainFxmlClass {
+
+}
+.scroll{
+    -fx-background-color:transparent;
+}
+.button{
+    -fx-background-color: #66b3aa;
+    -fx-border-color: #010101;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+.button:hover{
+    -fx-background-color: #3b6fd3;
+    -fx-border-color: #010101;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}

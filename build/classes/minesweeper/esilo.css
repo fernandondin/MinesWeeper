@@ -1,0 +1,48 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 9/12/2018, 01:27:58 PM
+    Author     : fernandondin
+*/
+.label{
+     -fx-font-family: 'Black Sambath';
+     -fx-font-size: 40;
+     -fx-border-radius: 20;
+     -fx-background-radius: 20;
+     -fx-border-color: #fefefe;
+     -fx-border-width: 3;
+     -fx-text-fill: #fefefe;
+}
+.x{
+    -fx-font-family:'Black Sambath';
+    -fx-font-size: 20;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+    -fx-border-width: 0;
+    -fx-text-fill: #fefefe;
+}
+.header{
+    -fx-background-color: #feaa5b;
+}
+.vbox{
+    -fx-background-color: #7586c7;
+}
+.button{
+    -fx-font-family:'Black Sambath';
+    -fx-border-radius: 40;
+    -fx-background-color: #ec4444;
+    -fx-border-color: #fefefe;
+    -fx-border-width: 3;
+    -fx-font-size: 30;
+    -fx-text-fill: #fefefe;
+    -fx-background-radius: 30;
+    -fx-cursor: hand;
+}
+.button:hover{
+    -fx-background-color: #ed4aa0;
+    -fx-scale-x: 1.5;
+    -fx-scale-y: 1.5;
+}
