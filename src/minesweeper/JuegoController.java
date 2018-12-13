@@ -6,10 +6,15 @@
 package minesweeper;
 
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -26,8 +31,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
@@ -52,7 +59,7 @@ public class JuegoController implements Initializable,EventHandler<ActionEvent>{
 
 }
     //Usamos herencia para extender a Button
-    private class ButtonCoord extends Button{
+    private class ButtonCoord extends Button implements Serializable{
         private int x,y;
         private boolean isMarked,hasFlag;
         public ButtonCoord(String t,int x,int y){
@@ -70,16 +77,62 @@ public class JuegoController implements Initializable,EventHandler<ActionEvent>{
     private ScrollPane sp;
     @FXML
     private Label timer,flags,record;
+    
     @FXML
     private CheckBox checkBox;
     private int nFlags;
     public static Mine mine;
     private boolean dead;
     private ButtonCoord[][] button;
+    public static String nombre;
     long tiempo;
     private boolean inGame;
+    public static boolean esCargado=false;
+    private Datos d = new Datos();
+    private TreeMap<String,Object> partida;
     @FXML
-    public void menu(ActionEvent ev){
+    public void save(ActionEvent ev) throws ClassNotFoundException, IOException{
+        for(int i=0;i<button.length;i++){
+            for(int j=0;j<button[i].length;j++){
+                if(button[i][j].isMarked){
+                    mine.getCell()[i][j].marked = true;
+                }
+            }
+        }
+        TreeMap<String,Object> tm = new TreeMap<>();
+        tm.put("tiempo", tiempo);
+        tm.put("mine", mine);
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Nombre");
+        dialog.setHeaderText("Ingrese el nombre de la partida:");
+        Optional<String> respuesta = dialog.showAndWait();
+        Date date = new Date();
+        DateFormat formatH = new SimpleDateFormat("HH:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        String fecha = "unknown"+".mine";
+        if(respuesta == null || !respuesta.isPresent()){
+            try{
+                d.escribe(tm,"unknown.mine");
+            }catch(Exception e){
+                System.err.println(e);
+            }
+        }else{
+            if(respuesta.get().trim().equals("")){
+                try{
+                d.escribe(tm, fecha);
+                }catch(IOException | ClassNotFoundException e){
+                    System.err.println("error al escribir");
+                    System.err.println(e);
+                }
+            }else{
+                try{
+                    d.escribe(tm, respuesta.get().toLowerCase().trim()+".mine");
+                }catch(IOException | ClassNotFoundException e){System.err.println("error al escribir");}
+            }
+        }
+   
+    }
+    private void menu(){
         try{
             FXMLLoader fxmlLoader= new FXMLLoader(getClass().getResource("FXMLDocument.fxml"));
             Parent root1= (Parent)fxmlLoader.load();
@@ -98,8 +151,12 @@ public class JuegoController implements Initializable,EventHandler<ActionEvent>{
         stage.close();
     }
     @FXML
+    public void menu(ActionEvent ev){
+        System.exit(1);
+    }
+    @FXML
     public void reiniciar(ActionEvent ev){
-        JuegoController.mine = new Mine(mine.getX(),mine.getY(),mine.getMinas());
+        JuegoController.mine = new Mine(mine.getX(),mine.getY(),mine.getMinas(),mine.getNombre());
         try{
             FXMLLoader fxmlLoader= new FXMLLoader(getClass().getResource("Juego.fxml"));
             Parent root1= (Parent)fxmlLoader.load();
@@ -128,10 +185,41 @@ public class JuegoController implements Initializable,EventHandler<ActionEvent>{
             }
         }
     }
+    private void win(){
+        int c=0;
+        for(int i=0;i<button.length;i++){
+            for(int j=0;j<button[i].length;j++){
+                if(button[i][j].isMarked){
+                    c++;
+                }
+            }
+        }
+        System.out.println(Integer.parseInt(flags.getText().substring(0, flags.getText().indexOf("/"))));
+        System.out.println(c);
+        if(c == mine.getX()*mine.getY()- mine.getMinas()){
+            dead=true;
+            for(int i=0;i<button.length;i++){
+                for(int j=0;j<button[i].length;j++){
+                    //if(mine.getCell()[i][j].getElement() == -1){
+                        button[i][j].setText("✔");
+                        button[i][j].styleProperty().set(" -fx-background-color: #5ce04e;\n" +
+            "    -fx-border-color: #010101;\n" +
+            "    -fx-border-radius: 10;\n" +
+            "    -fx-background-radius: 10;\n"+"-fx-font-size:20;");
+                    //}
+                }
+            } 
+        
+        
+        }
+    }
    @Override
-    public void handle(ActionEvent event) {
+    public void handle(ActionEvent event) {      
+        win();
         if(!inGame){
-            tiempo=System.currentTimeMillis();
+            if(!esCargado){
+               tiempo=System.currentTimeMillis();
+            }
             this.flags.setText(nFlags+"/"+mine.getMinas());
             UpdateTask updTask = new UpdateTask();
             timer.textProperty().bind(updTask.valueProperty());
@@ -146,11 +234,13 @@ public class JuegoController implements Initializable,EventHandler<ActionEvent>{
         }
         if(checkBox.selectedProperty().get()){
             if(btn.hasFlag){
+                win();
                 btn.setText("");
                 nFlags--;
                 btn.hasFlag = false;
                 this.flags.setText(nFlags+"/"+mine.getMinas());
             }else if(!btn.isMarked){
+                win();
                 btn.hasFlag = true;
                 btn.setText("🚩🚩🚩");
                 nFlags++;
@@ -169,6 +259,7 @@ public class JuegoController implements Initializable,EventHandler<ActionEvent>{
             }
             else if(mine.getCell()[btn.x][btn.y].getElement() > 0){
                 button[btn.x][btn.y].setText(""+mine.getCell()[btn.x][btn.y].getElement());
+                button[btn.x][btn.y].isMarked = true;
             }
             else if(!mine.getCell()[btn.x][btn.y].isMarked()){
                 button[btn.x][btn.y].setText(mine.getCell()[btn.x][btn.y].getElement()+"");
@@ -181,6 +272,7 @@ public class JuegoController implements Initializable,EventHandler<ActionEvent>{
              }
         }
         updateStyle();
+                win();
     }
     private void updateStyle(){
         for(int i=0;i<button.length;i++){
@@ -215,7 +307,6 @@ public class JuegoController implements Initializable,EventHandler<ActionEvent>{
         }
     }
     private void updateN1(Mine.Cell c){
-        //System.out.println(c.getNeighbors());
         for(Mine.Cell vecino:c.getNeighbors()){
             if(/*!button[c.getX()][c.getY()].isMarked &&*/ vecino.getElement() != -1){
                 button[vecino.getX()][vecino.getY()].setText(vecino.getElement()+"");
@@ -223,12 +314,7 @@ public class JuegoController implements Initializable,EventHandler<ActionEvent>{
             }
         }
     }
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        //int spa = 64;
-        //int spa = 57; //works with 9x9
-        //int spa = 50; //works with 10x10
-        //int spa = 43; //works with 11x11
+    private void noCargado(){
         int base = 64;
         int spa = base - ((mine.getX() - 8)*7);
         if(spa < 43){
@@ -236,12 +322,11 @@ public class JuegoController implements Initializable,EventHandler<ActionEvent>{
         }
         //int spa = 39;
         button = new ButtonCoord[mine.getX()][mine.getY()];
+        record.setText(mine.getNombre());
         GridPane gp = new GridPane();
         sp.setContent(gp);
         RowConstraints rowConstraints = new RowConstraints(spa, spa, spa);
         ColumnConstraints columnConstraints = new ColumnConstraints(spa, spa, spa);
-        System.out.println(mine.getX());
-        System.out.println(mine.getY());
         for(int i=0;i<mine.getX();i++){
             gp.getRowConstraints().add(i, rowConstraints);
             for(int j=0;j<mine.getY();j++){
@@ -255,6 +340,85 @@ public class JuegoController implements Initializable,EventHandler<ActionEvent>{
             }
         }
         this.flags.setText(nFlags+"/"+mine.getMinas());
+    }
+    private void cargado(){
+        TreeMap<String,Object> ts = null;
+        try {
+            ts = (TreeMap<String,Object>)d.lee(nombre);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(JuegoController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(JuegoController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if(ts == null){
+            menu();
+            return;
+        }
+        mine = (Mine)ts.get("mine");
+        button = new ButtonCoord[mine.getX()][mine.getY()];
+        tiempo = (long) ts.get("tiempo");
+        this.flags.setText(nFlags+"/"+mine.getMinas());
+            UpdateTask updTask = new UpdateTask();
+            timer.textProperty().bind(updTask.valueProperty());
+            Thread changes = new Thread(updTask);
+            changes.start();
+            inGame=true;
+        record.setText(mine.getNombre());
+        int base = 64;
+        int spa = base - ((mine.getX() - 8)*7);
+        if(spa < 43){
+            spa = 43;
+        }
+        GridPane gp = new GridPane();
+        sp.setContent(gp);
+        RowConstraints rowConstraints = new RowConstraints(spa, spa, spa);
+        ColumnConstraints columnConstraints = new ColumnConstraints(spa, spa, spa);
+        for(int i=0;i<mine.getX();i++){
+            gp.getRowConstraints().add(i, rowConstraints);
+            for(int j=0;j<mine.getY();j++){
+              gp.getColumnConstraints().add(j, columnConstraints);
+              ButtonCoord btn = new ButtonCoord(" ",i,j);
+              btn.setPrefSize(spa, spa);
+              btn.setOnAction(this);
+              button[i][j] = btn;
+              if(mine.getCell()[i][j].isMarked()){
+                  button[i][j].isMarked =true;
+                  if(mine.getCell()[i][j].getElement() == -1){
+                    button[i][j].setText("✸");
+                    button[i][j].styleProperty().set(" -fx-background-color: #66b3aa;\n" +
+        "    -fx-border-color: #010101;\n" +
+        "    -fx-border-radius: 10;\n" +
+        "    -fx-background-radius: 10;\n"+"-fx-font-size:20;");
+                    button[i][j].isMarked = true;
+            }
+            else if(mine.getCell()[i][j].getElement() > 0){
+                button[i][j].setText(""+mine.getCell()[btn.x][btn.y].getElement());
+            }
+            else {
+                    button[i][j].setText("");
+                    button[i][j].styleProperty().set("-fx-background-color:#fefefe;");
+                    button[i][j].isMarked = true;
+             }
+              }
+              gp.add(btn, i, j);                     
+            }
+        }
+        this.flags.setText(nFlags+"/"+mine.getMinas());
+
+    }
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        //int spa = 64;
+        //int spa = 57; //works with 9x9
+        //int spa = 50; //works with 10x10
+        //int spa = 43; //works with 11x11
+        
+        if(!esCargado){
+            noCargado();            
+        }else{
+            cargado();
+        }
+
     }    
     
 }

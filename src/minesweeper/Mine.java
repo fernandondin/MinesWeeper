@@ -1,15 +1,13 @@
 package minesweeper;
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.Random;
-public class Mine{
-    public static void print(String m){
-	System.out.println(m);
-    }
-    public class Cell{
+public class Mine implements Serializable{
+    public class Cell implements Serializable{
 	private int cx;
 	private int cy;
 	private int element;
-	private boolean marked;
+	public boolean marked;
 	private LinkedList<Cell> neighbors;
 	public Cell(int cx,int cy,int element){
 	    this.cx=cx;
@@ -108,13 +106,20 @@ public class Mine{
     private int y;
     private int minas;
     private Cell[][] cell;
-    public Mine(int x,int y,int minas){
+    private String nombre;
+    public void set(String n){
+        this.nombre=nombre;
+    }
+    public String getNombre(){
+        return this.nombre;
+    }
+    public Mine(int x,int y,int minas,String nombre){
 	this.x=x;
 	this.y=y;
 	this.minas=minas;
 	cell = new Cell[x][y];
         llenaCell();
-
+        this.nombre=nombre;
     }
     public int getMinas(){
         return minas;
@@ -155,11 +160,7 @@ public class Mine{
 	updateNeighbors();
 	for(int i=0;i<cell.length;i++){
 		for(int j=0;j<cell[i].length;j++){
-                   System.out.println("Celda "+cell[i][j]);
-
-                    System.out.println("Vecinos: ");
 		    for(Cell ne:cell[i][j].neighbors){
-                        System.out.println(ne.element);
 		}
 	    }
 }
@@ -167,11 +168,8 @@ public class Mine{
     private void updateCell(){
 	for(int i=0;i<cell.length;i++){
 		for(int j=0;j<cell[i].length;j++){
-                   //System.out.println("Celda "+cell[i][j]);
 		    int c =0;
-                    //System.out.println("Vecinos: ");
 		    for(Cell ne:cell[i][j].neighbors){
-                        //System.out.println(ne.element);
 			ne = cell[ne.cx][ne.cy];
 			if(ne.element==-1)
 			    c++;
@@ -201,9 +199,5 @@ public class Mine{
 	    s+="\n";
 	}
 	return s;
-    }
-    public static void main(String... args){
-	Mine m = new Mine(8,10,17);
-	print(m.toString());
     }
 }

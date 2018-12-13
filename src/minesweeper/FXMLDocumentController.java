@@ -8,8 +8,12 @@ package minesweeper;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
+import java.util.LinkedList;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -19,10 +23,13 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.TextField;
 import javafx.scene.text.Font;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -38,14 +45,18 @@ public class FXMLDocumentController implements Initializable {
     private Spinner spinnerX,spinnerY,nMinas;
     @FXML
     private Button play;
-    
-    private int mult;
     @FXML
-    private void handleButtonAction(ActionEvent event){
+    private Button buttonFile;
+    @FXML
+    private TextField nombre;
+    private int mult;
+    private String n;
+    private String archivo;
+    private void def(){
         int x = Integer.parseInt(spinnerX.getValue().toString());
         int y = Integer.parseInt(spinnerY.getValue().toString());
         int nm = Integer.parseInt(nMinas.getValue().toString());
-        JuegoController.mine = new Mine(x,y,nm);
+        JuegoController.mine = new Mine(x,y,nm,n);
         try{
             FXMLLoader fxmlLoader= new FXMLLoader(getClass().getResource("Juego.fxml"));
             Parent root1= (Parent)fxmlLoader.load();
@@ -57,9 +68,48 @@ public class FXMLDocumentController implements Initializable {
                 System.exit(0);
             });
         }catch(Exception e){
-        }
+        }               
         Stage stage = (Stage) this.play.getScene().getWindow();
         stage.close();
+    }
+    @FXML
+    private void juegoArchivo(ActionEvent event){
+        final FileChooser fileChooser = new FileChooser();
+        File file = fileChooser.showOpenDialog(buttonFile.getScene().getWindow());
+        if (file != null) {
+            if(file.getName().contains(".mine")){
+                JuegoController.nombre = file.getName();
+                JuegoController.esCargado = true;
+                try{
+                    FXMLLoader fxmlLoader= new FXMLLoader(getClass().getResource("Juego.fxml"));
+                    Parent root1= (Parent)fxmlLoader.load();
+                    Stage stage= new Stage();
+                    stage.setResizable(false);
+                    stage.setScene(new Scene(root1));
+                    stage.show();
+                    stage.setOnCloseRequest(evt -> {
+                        System.exit(0);
+                    });
+                }catch(IOException e){
+                    System.out.println(e);
+                }            
+            }
+            else{
+                def();
+            }
+        }else{
+            def();
+        }
+        Stage stage1 = (Stage) this.play.getScene().getWindow();
+                    stage1.close();
+    }
+    @FXML
+    private void handleButtonAction(ActionEvent event){
+        n = nombre.getText();
+        if(n.equals("") || n == null){
+            n = "unknown";
+        }
+            def();
     }
     private void numeroMinas(){
         // un hilo para checar siempre el numero celdas que habra y que pueda haber n-1 minas 
@@ -96,5 +146,4 @@ public class FXMLDocumentController implements Initializable {
         st.setAutoReverse(true);
         st.play();
     }    
-    
 }

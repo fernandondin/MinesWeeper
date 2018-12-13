@@ -1,7 +1,6 @@
 /*
  * Empty Stylesheet file.
  */
-
 .mainFxmlClass {
 
 }
@@ -39,11 +38,15 @@
 }
 .button:hover{
     -fx-background-color: #3b6fd3;
-    -fx-border-color: #010101;
+    -fx-border-color:#010101;
     -fx-border-radius: 10;
     -fx-background-radius: 10;
 }
 .timer{
     -fx-font-family:'Black Sambath';
+    -fx-font-size:30;
+}
+.record{
+    -fx-font-family:'BlackSambath';
     -fx-font-size:30;
 }

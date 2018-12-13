@@ -40,8 +40,8 @@
          <children>
             <HBox alignment="CENTER" layoutX="200.0" layoutY="4.0" prefHeight="134.0" prefWidth="604.0" spacing="30.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <Label styleClass="timer" text="Best time:" />
-                  <Label fx:id="record" styleClass="timer" text="Fernando: 1:15" />
+                  <Label fx:id="record1" styleClass="timer" text="Nombre;" />
+                  <Label fx:id="record" styleClass="timer" text="Fernando" />
                </children>
             </HBox>
             <HBox alignment="CENTER" layoutX="14.0" prefHeight="134.0" prefWidth="200.0" spacing="30.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -84,7 +84,7 @@
             </HBox>
             <HBox alignment="CENTER" layoutX="48.0" layoutY="363.0" prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="79.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="363.0">
                <children>
-                  <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#menu" prefHeight="60.0" prefWidth="116.0" styleClass="btn" text="Menu" />
+                  <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#menu" prefHeight="60.0" prefWidth="116.0" styleClass="btn" text="Salir" />
                </children>
             </HBox>
             <HBox alignment="CENTER" layoutX="14.0" layoutY="195.0" prefHeight="79.0" prefWidth="269.0" AnchorPane.bottomAnchor="268.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="195.0">
@@ -94,7 +94,7 @@
             </HBox>
             <HBox alignment="CENTER" layoutY="463.0" prefHeight="100.0" prefWidth="269.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="463.0">
                <children>
-                  <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#menu" prefHeight="60.0" prefWidth="116.0" styleClass="btn" text="Save" />
+                  <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#save" prefHeight="60.0" prefWidth="116.0" styleClass="btn" text="Save" />
                </children>
             </HBox>
          </children>

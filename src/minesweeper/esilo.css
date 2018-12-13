@@ -50,3 +50,22 @@ and open the template in the editor.
     -fx-scale-x: 1.5;
     -fx-scale-y: 1.5;
 }
+.archivo:hover{
+    -fx-border-color:#3668e6;
+    -fx-background-color: #5da1c9;
+    -fx-border-radius:15;
+    -fx-background-radius:15;
+    -fx-font-family:'Black Sambath';
+    -fx-text-fill:#fefefe;
+    -fx-font-size:30;
+    -fx-border-width:2;
+}
+.archivo{
+    -fx-background-color: #5da1c9;
+    -fx-border-radius:15;
+    -fx-background-radius:15;
+    -fx-font-family:'Black Sambath';
+    -fx-text-fill:#fefefe;
+    -fx-font-size:30;
+    -fx-border-color:transparent;
+}
