@@ -5,6 +5,19 @@
 .mainFxmlClass {
 
 }
+.check{
+    -fx-font-family:'Black Sambath';
+    -fx-font-size:25;
+}
+.check .box{
+    -fx-border-radius: 15;
+}
+.check:selected .mark {
+-fx-background-color: white;
+}
+.check-box:selected .box {
+-fx-background-color: #28a3f4;
+}
 .scroll{
     -fx-background-color:transparent;
 }
@@ -13,10 +26,24 @@
     -fx-border-color: #010101;
     -fx-border-radius: 10;
     -fx-background-radius: 10;
+    -fx-font-size:20;
+}
+.btn{
+    -fx-background-color: #5da1c9;
+    -fx-border-radius:15;
+    -fx-background-radius:15;
+    -fx-font-family:'Black Sambath';
+    -fx-text-fill:#fefefe;
+    -fx-font-size:30;
+    -fx-border-color:transparent;
 }
 .button:hover{
     -fx-background-color: #3b6fd3;
     -fx-border-color: #010101;
     -fx-border-radius: 10;
     -fx-background-radius: 10;
+}
+.timer{
+    -fx-font-family:'Black Sambath';
+    -fx-font-size:30;
 }

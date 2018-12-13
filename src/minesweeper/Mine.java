@@ -1,5 +1,4 @@
 package minesweeper;
-
 import java.util.LinkedList;
 import java.util.Random;
 public class Mine{
@@ -21,6 +20,12 @@ public class Mine{
         public LinkedList<Cell> getNeighbors(){
             return this.neighbors;
         }
+        public int getX(){
+            return cx;
+        }
+        public int getY(){
+            return cy;
+        }
         public int getElement(){
             return this.element;
         }
@@ -36,7 +41,7 @@ public class Mine{
 	    return cell.cx == this.cx && cell.cy == this.cy;
 	}
 	@Override public String toString(){
-	    return "("+cx+","+cy+")";
+	    return "("+cx+","+cy+"):"+element;
 	}
 	private void addN(){
 	    if(cx == 0 && cy == 0){
@@ -109,6 +114,10 @@ public class Mine{
 	this.minas=minas;
 	cell = new Cell[x][y];
         llenaCell();
+
+    }
+    public int getMinas(){
+        return minas;
     }
     public Cell[][] getCell(){  
         return this.cell;
@@ -119,11 +128,14 @@ public class Mine{
     public int getY(){
         return this.y;
     }
+    public void setMarked(Cell c,boolean b){
+        cell[c.cx][c.cy].marked = true;
+    }
     private void llenaCell(){
 	int elemento = 0;
 	int c = minas;
 	Random r = new Random();
-	int l = 5;
+	int l = 400;
 	while(c > 0){
 	    for(int i=0;i<cell.length;i++){
 		for(int j=0;j<cell[i].length;j++){
@@ -140,12 +152,26 @@ public class Mine{
 	    }
 	}
 	updateCell();
+	updateNeighbors();
+	for(int i=0;i<cell.length;i++){
+		for(int j=0;j<cell[i].length;j++){
+                   System.out.println("Celda "+cell[i][j]);
+
+                    System.out.println("Vecinos: ");
+		    for(Cell ne:cell[i][j].neighbors){
+                        System.out.println(ne.element);
+		}
+	    }
+}
     }
     private void updateCell(){
 	for(int i=0;i<cell.length;i++){
 		for(int j=0;j<cell[i].length;j++){
+                   //System.out.println("Celda "+cell[i][j]);
 		    int c =0;
+                    //System.out.println("Vecinos: ");
 		    for(Cell ne:cell[i][j].neighbors){
+                        //System.out.println(ne.element);
 			ne = cell[ne.cx][ne.cy];
 			if(ne.element==-1)
 			    c++;
@@ -153,6 +179,15 @@ public class Mine{
 		    cell[i][j].element = cell[i][j].element == -1 ? cell[i][j].element:c;
 		}
 	    }
+    }
+	private void updateNeighbors(){
+        for(int i=0;i<cell.length;i++){
+            for(int j=0;j<cell[i].length;j++){
+                 for(Cell vecino:cell[i][j].neighbors){
+                     vecino.element = cell[vecino.cx][vecino.cy].element;
+                 }   
+            }       
+        }
     }
     @Override public String toString(){
 	String s = "";

@@ -7,6 +7,10 @@ and open the template in the editor.
     Created on : 9/12/2018, 01:27:58 PM
     Author     : fernandondin
 */
+.text{
+    -fx-font-family:'Black Sambath';
+    -fx-font-size:20;
+}
 .label{
      -fx-font-family: 'Black Sambath';
      -fx-font-size: 40;

@@ -58,11 +58,8 @@ public class FXMLDocumentController implements Initializable {
             });
         }catch(Exception e){
         }
-        System.out.println(x);
-        System.out.println(y);
         Stage stage = (Stage) this.play.getScene().getWindow();
-    // do what you have to do
-    stage.close();
+        stage.close();
     }
     private void numeroMinas(){
         // un hilo para checar siempre el numero celdas que habra y que pueda haber n-1 minas 
